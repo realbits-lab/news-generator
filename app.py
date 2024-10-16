@@ -39,6 +39,26 @@ if __name__ == "__main__":
         # print(f"response: {response}")
         return response.choices[0].message.content.strip()
 
+    def generate_excerpt(summaries):
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant that generates an excerpt from a list of summaries.",
+                },
+                {
+                    "role": "user",
+                    "content": f"Generate excerpt from a list of summaries in Korean within 100 characters.\n\n{summaries}",
+                },
+            ],
+            max_tokens=4096,
+            n=1,
+            temperature=0.5,
+        )
+        # print(f"response: {response}")
+        return response.choices[0].message.content.strip()
+
     def crawl_and_summarize(url):
         try:
             response = requests.get(url)
@@ -49,11 +69,16 @@ if __name__ == "__main__":
             return f"Error crawling {url}: {str(e)}"
 
     print("\nTop 5 entries with summaries:")
+    summaries = []
     for entry in entries_by_points[:5]:
         title = entry["title"]
         url = entry["url"]
         summary = crawl_and_summarize(url)
+        summaries.append(summary)
 
         print(f"<a href='{url}'>{title}</a>")
         print(summary)
         print()
+
+    excerpt = generate_excerpt(summaries)
+    print(f"\nExcerpt: {excerpt}")
