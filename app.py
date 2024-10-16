@@ -29,14 +29,15 @@ if __name__ == "__main__":
                 },
                 {
                     "role": "user",
-                    "content": f"Summarize the following text in 3 itemized sentences:\n\n{text}",
+                    "content": f"Summarize the following text in 3 itemized sentences in Korean. Use numbering for items.:\n\n{text}",
                 },
             ],
             max_tokens=4096,
             n=1,
             temperature=0.5,
         )
-        return response.choices[0].message["content"].strip()
+        # print(f"response: {response}")
+        return response.choices[0].message.content.strip()
 
     def crawl_and_summarize(url):
         try:
